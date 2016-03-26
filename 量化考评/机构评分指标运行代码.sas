@@ -1,0 +1,13 @@
+OPTIONS MPRINT MLOGIC NOXWAIT COMPRESS=YES;
+%LET STAT_OP=8月全量;
+%LET STAT_DT=MDY(8,31,2014);
+LIBNAME SSS "D:\数据\&STAT_OP.";
+
+%LET PATH0=C:\Users\cis\Desktop\常用代码;
+%LET PATH1="&PATH0.\自动化\000_FORMAT.sas";
+%LET PATH2="&PATH0.\自动化\机构评分自动化\机构评分指标计算.sas";
+%LET OUTPATH="&PATH0.\自动化\结果文件夹\机构评分结果\机构评分指标&STAT_OP..xls";
+%INCLUDE &PATH1.;%FORMAT;
+%INCLUDE &PATH2.;
+%SCORE(&STAT_DT);
+
