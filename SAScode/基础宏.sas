@@ -1,12 +1,13 @@
 /*编号:1*/
+/*功能同编号20*/
 %macro GetFileAndSubDirInfoInDir(InDirPath,Filter,TargetTable,OutFilePath,Expand);
 /**********************************************************************/
 /* 此宏用于获得目标文件夹下所有文件及子文件夹的信息，并将此信息保存至 */
 /* SAS表格或导出至txt文件中。其中，InDirPath是指定的目标文件夹路径，  */
-/* 路径最后要加上\；Filter是文件过滤设置，支持*和?通配符，若需要导出  */
-/* 所有文件列表，可以设置为空；TargetTable是保存文件信息的SAS表格，若 */
-/* 不需要生成，可以设为空；OutFilePath是导出txt文件的路径，若不需要导 */
-/* 出，可以设为空；Expand是标记变量，=Yes表示展开所有文件夹，列表最后 */
+/* 路径最后要加上\;Filter是文件过滤设置，支持*和?通配符，若需要导出  */
+/* 所有文件列表，可以设置为空;TargetTable是保存文件信息的SAS表格，若 */
+/* 不需要生成，可以设为空;OutFilePath是导出txt文件的路径，若不需要导 */
+/* 出，可以设为空;Expand是标记变量，=Yes表示展开所有文件夹，列表最后 */
 /* 包含文件及其所处文件夹信息，=NO表示只列出目标文件夹下第一层文件和  */
 /* 文件夹的信息。                                                     */
 /*                                                                    */
@@ -47,14 +48,14 @@ options nosource nonotes errors=0;
 /* 情形2-1：展开所有文件夹 */
 %if %UPCASE(&Expand) EQ YES %then %do;
   options noxwait xsync;
-  x "dir &InDirPath.&Filter /s /a > d:\GFASDIID_temp.txt";
-  %let OutFilePath=d:\GFASDIID_temp.txt;
+  x "dir &InDirPath.&Filter /s /a > c:\GFASDIID_temp.txt";
+  %let OutFilePath=c:\GFASDIID_temp.txt;
 %end;
 /* 情形2-2：不展开文件夹，只包含第一层子文件夹和文件的信息 */
 %else %if %UPCASE(&Expand) EQ NO %then %do;
   options noxwait xsync;
-  x "dir &InDirPath.&Filter > d:\GFASDIID_temp.txt";
-  %let OutFilePath=d:\GFASDIID_temp.txt;
+  x "dir &InDirPath.&Filter > c:\GFASDIID_temp.txt";
+  %let OutFilePath=c:\GFASDIID_temp.txt;
 %end;
 /* 情形2-3：错误输入Expand参数情形 */
 %else %do;
@@ -116,26 +117,27 @@ proc delete data=GFASDIID_temp;
 run;
 /* 恢复显示LOG信息 */
 options source notes errors=5;
-%if &OutFilePath=d:\GFASDIID_temp.txt %then x "erase d:\GFASDIID_temp.txt";
+%if &OutFilePath=c:\GFASDIID_temp.txt %then x "erase c:\GFASDIID_temp.txt";
 %exit:
 %mend;
 
-/*%macro Demo();*/
-/*%let InDirPath=e:\Works\;*/
-/*%let Filter=*.sas;  /* 文件过滤设置，若需要导出所有文件列表，则设置为空即可，即Filter=; */*/
-/*%let TargetTable=FileList;  /* 若不需要生成包含文件列表的SAS表格，则设为空，大小写不敏感 */*/
-/*%let OutFilePath=;  /* 若不需要导出文件列表txt文件，则设为空，大小写不敏感 */*/
-/*%let Expand=Yes;  /* =Yes表示展开所有文件夹，列表最后包含文件及其所处文件夹信息，否则=No，大小写不敏感 */*/
+*%macro Demo();
+*%let InDirPath=e:\Works\;
+*%let Filter=*.sas;  /* 文件过滤设置，若需要导出所有文件列表，则设置为空即可，即Filter=; */
+*%let TargetTable=FileList;  /* 若不需要生成包含文件列表的SAS表格，则设为空，大小写不敏感 */
+*%let OutFilePath=;  /* 若不需要导出文件列表txt文件，则设为空，大小写不敏感 */
+*%let Expand=Yes;  /* =Yes表示展开所有文件夹，列表最后包含文件及其所处文件夹信息，否则=No，大小写不敏感 */
 /*%GetFileAndSubDirInfoInDir(&InDirPath,&Filter,&TargetTable,&OutFilePath,&Expand);*/
 /*%mend;*/
 
 
 /*编号：2*/
+
 %macro PrxChange(InputString,PrxString);
 
 /**********************************************************************/
 /* 此宏利用正则表达式的方法替换原始字符串的匹配子串为目标子串。其中， */
-/* InputString是原始字符串；PrxString是指定子串的正则表达式，注意正则 */
+/* InputString是原始字符串;PrxString是指定子串的正则表达式，注意正则 */
 /* 表达式要用/.../符号括起来。                                        */
 /*                                                                    */
 /* 最终原始字符串中的匹配子串替换为目标子串。注意用于替换子串的正则表 */
@@ -161,8 +163,8 @@ options source notes errors=5;
 
 
 /*%macro Demo();*/
-/**/
-/*/* replace the matching string to target string */*/
+
+/* replace the matching string to target string */
 /*%let zip=%PrxChange(InputString=Jones Fred,PrxString=s/(\w+) (\w+)/$2 $1/);*/
 /*%put &zip;*/
 /**/
@@ -173,7 +175,7 @@ options source notes errors=5;
 
 /**********************************************************************/
 /* 此宏利用正则表达式的方法检索字符串中是否包含有指定的子串。其中，   */
-/* InputString是原始字符串；PrxString是指定子串的正则表达式，注意正则 */
+/* InputString是原始字符串;PrxString是指定子串的正则表达式，注意正则 */
 /* 表达式要用/.../符号括起来。                                        */
 /*                                                                    */
 /* 最终若匹配成功，则返回1，否则返回0。                               */
@@ -201,8 +203,8 @@ options source notes errors=5;
 
 
 /*%macro Demo();*/
-/**/
-/*/* test whether there is a match or not */*/
+
+/* test whether there is a match or not */
 /*%let zip=%PrxMatch(InputString=34567-2345,PrxString=/\d{5}-\d{4}/);*/
 /*%put &zip;*/
 /**/
@@ -213,14 +215,14 @@ options source notes errors=5;
 
 /**********************************************************************/
 /* 此宏计算所选变量的统计指标。其中SourceTable是含有所选变量的原始表 */
-/* 格；TargetTable是结果表格；ByFactors是对统计量进行分组研究的分组变 */
-/* 量，没有分组变量时可设置为空；InputVar是进行统计的目标变量，若需要 */
+/* 格;TargetTable是结果表格;ByFactors是对统计量进行分组研究的分组变 */
+/* 量，没有分组变量时可设置为空;InputVar是进行统计的目标变量，若需要 */
 /* 统计全部变量、全部数值变量和全部字符变量，可分别设为_ALL_、 */
-/* _NUMERIC_和_CHARACTER_；InputVarType是目标变量的类型，当Statistic= */
-/* GMEAN时必须设置，=P表示价格变量，=R表示收益率变量；OutputVarType是 */
+/* _NUMERIC_和_CHARACTER_;InputVarType是目标变量的类型，当Statistic= */
+/* GMEAN时必须设置，=P表示价格变量，=R表示收益率变量;OutputVarType是 */
 /* 输出变量的类型，=Origin表示不作处理，即输出变量名称等于目标变量的 */
 /* 名称，并用_STAT_变量区分不同的统计量，=Suffix表示输出变量用不同的 */
-/* 统计量作为后缀；Weight是权重变量；Statistic是指定的统计量，=All时 */
+/* 统计量作为后缀;Weight是权重变量;Statistic是指定的统计量，=All时 */
 /* 同时计算N|MIN|MAX|MEAN|STD，也可以单独设置，可以设置的统计量如下所 */
 /* 示： */
 /* */
@@ -412,14 +414,16 @@ run;
 /* 第一步：计算分组均值 */
 proc sql noprint;
 create table GSFT_Mean as
-select *,Count(*) as _FREQ_,
-%do GSFT_i=1 %to &GSFT_InputVar_Num;
-(mean(&&GSFT_InputVar_Var&GSFT_i.)) as &&GSFT_InputVar_Var&GSFT_i.._Mean
-%if &GSFT_i NE &GSFT_InputVar_Num %then %do;
+select 
+*,
+Count(*) as _FREQ_,
+	%do GSFT_i=1 %to &GSFT_InputVar_Num;
+	(mean(&&GSFT_InputVar_Var&GSFT_i.)) as &&GSFT_InputVar_Var&GSFT_i.._Mean
+	%if &GSFT_i NE &GSFT_InputVar_Num %then %do;
 ,
 %end;
 %end;
-from &SourceTable
+from &SourceTable.
 %if &ByFactors NE %STR() %then %do;
 group by &ByFactors_Comma
 %end;
@@ -476,7 +480,6 @@ select distinct
 %do GSFT_i=1 %to &GSFT_InputVar_Num;
 (exp(sum(log(&&GSFT_InputVar_Var&GSFT_i))))**(1/COUNT(*)) as &&GSFT_InputVar_Var&GSFT_i
 %if &GSFT_i NE &GSFT_InputVar_Num %then %do;
-,
 %end;
 %end;
 %end;
@@ -618,15 +621,15 @@ quit;
 /*%let Statistic=GSUM; /* 仅为一个统计量 */*/
 /*%GetStatsForTable(&SourceTable,&TargetTable,&ByFactors,&InputVar,&InputVarType,&OutputVarType,&Weight,&Statistic);*/
 /**/
-/*%mend;*/
+*%mend;
 
 /*编号:5*/
 %macro GetCountForSeq(SourceTable,TargetTable,ByFactors,InputVar,OutputVar);
 
 /**********************************************************************/
 /* 此宏的作用是计算某数据表中指定变量的重复次数，即连续出现同一值的次 */
-/* 数。其中，SourceTable是原始表格；TargetTable是结果表格；ByFactors  */
-/* 是分组变量；InputVar是目标变量，可设置为多个，用空格分隔；Output_  */
+/* 数。其中，SourceTable是原始表格;TargetTable是结果表格;ByFactors  */
+/* 是分组变量;InputVar是目标变量，可设置为多个，用空格分隔;Output_  */
 /* Var是结果变量，其值为该观测值在序列中重复的次数，若不指定，则为原  */
 /* 目标变量后加后缀_Cnt。注意，在运行本宏之前需要将原始表格进行合适的 */
 /* 排序。                                                             */
@@ -726,15 +729,15 @@ run;
 /*%let OutputVar=;*/
 /*%GetCountForSeq(&SourceTable,&TargetTable,&ByFactors,&InputVar,&OutputVar);*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号：6*/
-%macro ChkDummyVar(SourceTable,InputVar,FlagIsDummyVar);
+/*%macro ChkDummyVar(SourceTable,InputVar,FlagIsDummyVar);*/
 
 /**********************************************************************/
 /* 此宏的作用是检查某数据表中的指定变量是否为虚拟变量，即取值只能为0  */
-/* 或1。其中，SourceTable是原始表格；InputVar是指定的变量，若为多个变 */
-/* 量，请用空格分隔；FlagIsDummyVar是标记宏变量名称，=1表示变量为虚拟 */
+/* 或1。其中，SourceTable是原始表格;InputVar是指定的变量，若为多个变 */
+/* 量，请用空格分隔;FlagIsDummyVar是标记宏变量名称，=1表示变量为虚拟 */
 /* 变量，否则=0，若有多个InputVar变量，则不同位置上的1或0代表相应的变 */
 /* 量是否是虚拟变量。注意，若某变量除含有0或1之外，还含有缺失值，则仍 */
 /* 然认为其为虚拟变量。                                               */
@@ -747,78 +750,75 @@ run;
 /*                                      Modified on 2013.3.30         */
 /**********************************************************************/
 
-%if %SYSFUNC(FIND(&SourceTable,.)) NE 0 %then %do;
-        %let CDV_LibName=%UPCASE(%SCAN(&SourceTable,1,.));
-        %let CDV_MemName=%UPCASE(%SCAN(&SourceTable,2,.));
-%end;
-%else %do;
-        %let CDV_LibName=WORK;
-        %let CDV_MemName=%UPCASE(&SourceTable);
-%end;
+/*%if %SYSFUNC(FIND(&SourceTable,.)) NE 0 %then %do;*/
+/*        %let CDV_LibName=%UPCASE(%SCAN(&SourceTable,1,.));*/
+/*        %let CDV_MemName=%UPCASE(%SCAN(&SourceTable,2,.));*/
+/*%end;*/
+/*%else %do;*/
+/*        %let CDV_LibName=WORK;*/
+/*        %let CDV_MemName=%UPCASE(&SourceTable);*/
+/*%end;*/
 
 /* 检查SourceTable的存在性 */
-%ChkDataSet(DataSet=&CDV_LibName..&CDV_MemName,FlagDataSetExists=CDV_FlagDataSetExists);
-
-%if &CDV_FlagDataSetExists EQ 0 %then %do;
-        %put ERROR: The DataSet &SourceTable does not exist, please check it again.;
-        %goto exit;
-%end;
+/*%ChkDataSet(DataSet=&CDV_LibName..&CDV_MemName,FlagDataSetExists=CDV_FlagDataSetExists);*/
+/**/
+/*%if &CDV_FlagDataSetExists EQ 0 %then %do;*/
+/*        %put ERROR: The DataSet &SourceTable does not exist, please check it again.;*/
+/*        %goto exit;*/
+/*%end;*/
 
 /* 检查InputVar的存在性 */
-%if %SYSFUNC(FIND(&InputVar,%STR(:))) NE 0 %then %do;
-    %GetVarListForTable(SourceTable=&SourceTable,
-        TargetTable=,
-        OutputVar=CDV_InputVar,
-        VarType=&InputVar);
-
-  %let InputVar=&CDV_InputVar;
-%end;
-
-%ChkVar(SourceTable=&SourceTable,InputVar=&InputVar,FlagVarExists=CDV_FlagInputVarExists);
-
-%if %SYSFUNC(FIND(&CDV_FlagInputVarExists,0)) NE 0 %then %do;
-    %put ERROR: The InputVar "%SCAN(&InputVar,%SYSFUNC(FIND(&CDV_FlagInputVarExists,0)))" does not exist in SourceTable, please check it again.;
-    %goto exit;
-%end;
+/*%if %SYSFUNC(FIND(&InputVar,%STR(:))) NE 0 %then %do;*/
+/*    %GetVarListForTable(SourceTable=&SourceTable,*/
+/*        TargetTable=,*/
+/*        OutputVar=CDV_InputVar,*/
+/*        VarType=&InputVar);*/
+/**/
+/*  %let InputVar=&CDV_InputVar;*/
+/*%end;*/
+/**/
+/*%ChkVar(SourceTable=&SourceTable,InputVar=&InputVar,FlagVarExists=CDV_FlagInputVarExists);*/
+/**/
+/*%if %SYSFUNC(FIND(&CDV_FlagInputVarExists,0)) NE 0 %then %do;*/
+/*    %put ERROR: The InputVar "%SCAN(&InputVar,%SYSFUNC(FIND(&CDV_FlagInputVarExists,0)))" does not exist in SourceTable, please check it again.;*/
+/*    %goto exit;*/
+/*%end;*/
 
 /* 拆分InputVar */
-%SeparateString(InputString=&InputVar,OutputString=CDV_InputVar);
+/*%SeparateString(InputString=&InputVar,OutputString=CDV_InputVar);*/
 
 /* 开始进行计算 */
-%global &FlagIsDummyVar;
-
-%let &FlagIsDummyVar=;
+/*%global &FlagIsDummyVar;*/
+/**/
+/*%let &FlagIsDummyVar=;*/
 
 /* 检查InputVar的格式，若为字符型，则一定不是虚拟变量 */
-%ChkVarType(SourceTable=&SourceTable,
-        InputVar=&InputVar,
-        FlagVarType=CDV_FlagInputVarType);
-
-%do CDV_i=1 %to &CDV_InputVar_Num;
-        %if %SUBSTR(%UPCASE(&CDV_FlagInputVarType),&CDV_i,1) EQ C %then %do;
-                %let &FlagIsDummyVar=&&&FlagIsDummyVar..0;
-        %end;
-        %else %if %SUBSTR(%UPCASE(&CDV_FlagInputVarType),&CDV_i,1) EQ N %then %do;
-                proc sql noprint;
-                        select COUNT(&&CDV_InputVar_Var&CDV_i) into :CDV_NumOfNonDummyValue
-                                from &SourceTable
-                                where &&CDV_InputVar_Var&CDV_i NE 0 AND &&CDV_InputVar_Var&CDV_i NE 1;
-                quit;
-
-                %if &CDV_NumOfNonDummyValue GT 0 %then %do;
-                        %let &FlagIsDummyVar=&&&FlagIsDummyVar..0;
-                %end;
-                %else %do;
-                        %let &FlagIsDummyVar=&&&FlagIsDummyVar..1;
-                %end;
-        %end;
-%end;
+/*%ChkVarType(SourceTable=&SourceTable,InputVar=&InputVar,FlagVarType=CDV_FlagInputVarType);*/
+/*%do CDV_i=1 %to &CDV_InputVar_Num;*/
+/*        %if %SUBSTR(%UPCASE(&CDV_FlagInputVarType),&CDV_i,1) EQ C %then %do;*/
+/*                %let &FlagIsDummyVar=&&&FlagIsDummyVar..0;*/
+/*        %end;*/
+/*        %else %if %SUBSTR(%UPCASE(&CDV_FlagInputVarType),&CDV_i,1) EQ N %then %do;*/
+/*                proc sql noprint;*/
+/*                        select COUNT(&&CDV_InputVar_Var&CDV_i) into :CDV_NumOfNonDummyValue*/
+/*                                from &SourceTable*/
+/*                                where &&CDV_InputVar_Var&CDV_i NE 0 AND &&CDV_InputVar_Var&CDV_i NE 1;*/
+/*                quit;*/
+/**/
+/*                %if &CDV_NumOfNonDummyValue GT 0 %then %do;*/
+/*                        %let &FlagIsDummyVar=&&&FlagIsDummyVar..0;*/
+/*                %end;*/
+/*                %else %do;*/
+/*                        %let &FlagIsDummyVar=&&&FlagIsDummyVar..1;*/
+/*                %end;*/
+/*        %end;*/
+/*%end;*/
 
 /* 若要显示&FlagIsDummyVar的值，请取消下面的注释 */
 /*%put &FlagIsDummyVar=&&&FlagIsDummyVar;*/
 
-%exit；
-%mend;
+/*%exit;*/
+/*%mend;*/
 
 
 /*%macro Demo();*/
@@ -837,7 +837,7 @@ run;
 
 /**********************************************************************/
 /* 此宏用于删除指定逻辑库中的空表，也即观测值为零的表格。其中LibName  */
-/* 是指定逻辑库名称；Filter是文件过滤设置，=Null时删除全部空表，包含  */
+/* 是指定逻辑库名称;Filter是文件过滤设置，=Null时删除全部空表，包含  */
 /* _和%等SQL中like子句的通配符时删除指定前后缀的空表，不包含任何通配  */
 /* 符时删除指定空表，若指定表不为空则不删除。                         */
 /*                                                                    */
@@ -926,16 +926,16 @@ quit;
 /*%macro Demo();*/
 /**/
 /*%let LibName=Work;*/
-/*%let Filter="a%";                /* =Null时删除全部空表；包含_和%等SQL中like子句的通配符时删除指定前后缀的空表，注意此时要加双引号；不包含任何通配符时删除指定空表 */*/
+/*%let Filter="a%";                /* =Null时删除全部空表;包含_和%等SQL中like子句的通配符时删除指定前后缀的空表，注意此时要加双引号;不包含任何通配符时删除指定空表 */*/
 /*%DropEmptyTables(&LibName,&Filter);*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号:8*/
 %macro DeleteMissObs(SourceTable,TargetTable,MissingVar);
 /**********************************************************************/
-/* 此宏删除原表中指定变量为缺失值的观测。其中SourceTable是原始表格；  */
-/* TargetTable是结果表格；MissingVar是可能含有缺失值的变量，=_Numeric_*/
+/* 此宏删除原表中指定变量为缺失值的观测。其中SourceTable是原始表格;  */
+/* TargetTable是结果表格;MissingVar是可能含有缺失值的变量，=_Numeric_*/
 /* 表示选择全部数值型变量，=_Character_表示选择全部字符型变量，=_All_ */
 /* 表示选择全部变量，也可以选择多个变量，用空格分隔。                 */
 /*                                                                    */
@@ -1053,16 +1053,16 @@ quit;
 /*%let MissingVar=_ALL_;                /* =_Numeric_表示选择全部数值型变量，=_Character表示选择全部字符型变量，=_All_表示选择全部变量，也可以选择多个变量，用空格分隔 */*/
 /*%DeleteMissObs(&SourceTable,&TargetTable,&MissingVar);*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号：9*/
 %macro GetVarListForTable(SourceTable,TargetTable,OutputVar,VarType,UseLabel);
 
 /**********************************************************************/
-/* 此宏的作用是得到指定表格的变量列表。其中，SourceTable是原始表格；  */
-/* TargetTable是结果表格；VarType是变量类型，=_Numeric_表示数值型，   */
+/* 此宏的作用是得到指定表格的变量列表。其中，SourceTable是原始表格;  */
+/* TargetTable是结果表格;VarType是变量类型，=_Numeric_表示数值型，   */
 /* =_Character_表示字符型，=_ALL_表示取得全部变量列表，=xx:表示以xx开 */
-/* 头的所有变量，=xx%表示包含xx的所有变量；UseLabel是标记变量，=Yes表 */
+/* 头的所有变量，=xx%表示包含xx的所有变量;UseLabel是标记变量，=Yes表 */
 /* 示用标签代替变量名，否则=No。                                      */
 /*                                                                    */
 /* 最终得到指定表格的变量列表。                                       */
@@ -1168,11 +1168,9 @@ run;
 
 /* 合并上述表格 */
 data &TargetTable;
-        set
+        set GVLFT_Res_&GVLFT_j;
         %do GVLFT_j=1 %to &GVLFT_VarType_Num;
-                GVLFT_Res_&GVLFT_j
         %end;
-        ;
 run;
 
 %if &OutputVar NE %STR() %then %do;
@@ -1214,17 +1212,35 @@ quit;
 /**/
 /*%put &VarString;*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号：10*/
 %macro GetDataSetInfoInLib(LibName,Filter,TargetTable,OutFilePath,Detail);
 
 /**********************************************************************/
 /* 此宏用于获得目标逻辑库下所有数据集的信息，并将此信息保存至SAS表格 */
-/* 或导出至txt文件中。其中，LibName是指定的逻辑库；Filter是数据集过滤 */
-/* 设置，支持_和%通配符，若需要导出所有数据集列表，可以设置为空； */
-/* TargetTable是保存数据集信息的SAS表格，若不需要生成，可以设为空； */
-/* OutFilePath是导出txt文件的路径，若不需要导出，可以设为空；Detail是 */
+/* 或导出至txt文件中。其中，LibName是指定的逻辑库;Filter是数据集过滤 */
+/* 设置，支持_和%通配符，若需要导出所有数据集列表，可以设置为空; */
+/* TargetTable是保存数据集信息的SAS表格，若不需要生成，可以设为空; */
+/* OutFilePath是导出txt文件的路径，若不需要导出，可以设为空;Detail是 */
+/* 标记变量，=Yes表示导出数据集列表详情，否则=No。 */
+/* */
+/* 最终得到的是含有目标逻辑库下所有数据集信息的SAS表格和存于指定路径 */
+/* 的txt文件。 */
+/* */
+/* Created on 2013.2.23 */
+/* Modified on 2013.4.3 */
+/**********************************************************************/
+
+/* 检查TargetTable和OutFilePath的非同时为空性 */
+%macro GetDataSetInfoInLib(LibName,Filter,TargetTable,OutFilePath,Detail);
+
+/**********************************************************************/
+/* 此宏用于获得目标逻辑库下所有数据集的信息，并将此信息保存至SAS表格 */
+/* 或导出至txt文件中。其中，LibName是指定的逻辑库;Filter是数据集过滤 */
+/* 设置，支持_和%通配符，若需要导出所有数据集列表，可以设置为空; */
+/* TargetTable是保存数据集信息的SAS表格，若不需要生成，可以设为空; */
+/* OutFilePath是导出txt文件的路径，若不需要导出，可以设为空;Detail是 */
 /* 标记变量，=Yes表示导出数据集列表详情，否则=No。 */
 /* */
 /* 最终得到的是含有目标逻辑库下所有数据集信息的SAS表格和存于指定路径 */
@@ -1303,7 +1319,6 @@ quit;
 
 %exit:
 %mend;
-
 /*%macro Demo();*/
 /**/
 /*%let LibName=Zheng;*/
@@ -1315,16 +1330,27 @@ quit;
 /**/
 /*%mend;*/
 
+/*%macro Demo();*/
+/**/
+/*%let LibName=Zheng;*/
+/*%let Filter=r%; /* 文件过滤设置，若需要导出所有文件列表，则设置为空即可，即Filter=; */*/
+/*%let TargetTable=FileList; /* 若不需要生成包含文件列表的SAS表格，则设为空，大小写不敏感 */*/
+/*%let OutFilePath=d:\Temp\abc.txt; /* 若不需要导出文件列表txt文件，则设为空，大小写不敏感 */*/
+/*%let Detail=Yes; /* =Yes表示在导出文件列表txt文件中包含InDirPath的详情，否则=No，大小写不敏感 */*/
+/*%GetDataSetInfoInLib(&LibName,&Filter,&TargetTable,&OutFilePath,&Detail);*/
+/**/
+%mend;
+
 /*编号：11*/
 %macro FillMissWithNonMiss(SourceTable,TargetTable,ByFactors,MissingVar,OrderVar,Type);
 /**********************************************************************/
 /* 此宏对原表中含有缺失值的变量进行填补，其方法是将缺失值用上一个或下 */
-/* 一个非缺失值来填补。其中SourceTable是原始表格；TargetTable是结果表 */
-/* 格；ByFactors是分组变量；MissingVar是可能含有缺失值的变量，        */
+/* 一个非缺失值来填补。其中SourceTable是原始表格;TargetTable是结果表 */
+/* 格;ByFactors是分组变量;MissingVar是可能含有缺失值的变量，        */
 /* =_Numeric_表示选择全部数值型变量，=_Character_表示选择全部字符型变 */
-/* 量，=_All_表示选择全部变量，也可以选择多个变量，用空格分隔；Order_ */
+/* 量，=_All_表示选择全部变量，也可以选择多个变量，用空格分隔;Order_ */
 /* Var是排列变量，可设置为多个，用空格分隔，默认按升序排列，若要降序  */
-/* 排列，可在相应的变量后加DESCENDING；Type是缺失值的选取方式，       */
+/* 排列，可在相应的变量后加DESCENDING;Type是缺失值的选取方式，       */
 /* =Previous表示缺失值选取前一个非缺失值，=Next表示缺失值选取后一个非 */
 /* 缺失值，=Mix表示用线性插值的方法填补缺失值（该方法只适用于数值型变 */
 /* 量，对字符型变量若设为Mix，则自动用Previous的方法插值）。          */
@@ -1704,13 +1730,14 @@ quit;
 /*%let Type=MIX;                /* 对缺失值进行处理的方法，=Previous、Next或MIX */*/
 /*%FillMissWithNonMiss(&SourceTable,&TargetTable,&ByFactors,&MissingVar,&OrderVar,&Type);*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号：12*/
+
 %macro GetMissNum(SourceTable,TargetTable,InputVar);
 /**********************************************************************/
 /* 此宏的作用是统计原表中不同变量的缺失值数量。其中SourceTable是原始 */
-/* 表格，SourceTable是结果表格；TargetTable是结果表格；InputVar是原始 */
+/* 表格，SourceTable是结果表格;TargetTable是结果表格;InputVar是原始 */
 /* 表格中的变量，可设多个变量，用空格分隔，也可如下设置：=_Numeric_表 */
 /* 示统计全部数值型变量，=_Character_表示统计全部字符型变量，=_All_表 */
 /* 示统计全部变量。 */
@@ -1948,10 +1975,10 @@ run;
 
 data &TargetTable;
 set
-%if &GMN_FlagNumVarExists GT 0 %then %do;
+%if &GMN_FlagNumVarExists GT 0 %then %do
 GMN_NumMiss
 %end;
-%if &GMN_FlagCharVarExists GT 0 %then %do;
+%if &GMN_FlagCharVarExists GT 0 %then %do
 GMN_CharMiss
 %end;
 ;
@@ -1974,15 +2001,15 @@ quit;
 /*%let InputVar=Cylinders; /* =_Numeric_表示统计全部数值型变量，=_Character_表示统计全部字符型变量，=_All_表示统计全部变量，大小写不敏感 */*/
 /*%GetMissNum(&SourceTable,&TargetTable,&InputVar);*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号：13*/
 %macro ChkValue(SourceTable,InputVar,Value,FlagValueExists);
 
 /**********************************************************************/
 /* 此宏的作用是检查某数据表中是否含有指定变量为某特定值的观测。其中， */
-/* SourceTable是原始表格；InputVar是指定的变量，且只能指定一个变量； */
-/* Value是指定的值，字符串不需要加引号，可以设为多个值，用空格分隔； */
+/* SourceTable是原始表格;InputVar是指定的变量，且只能指定一个变量; */
+/* Value是指定的值，字符串不需要加引号，可以设为多个值，用空格分隔; */
 /* FlagValueExists是标记宏变量名称，=1表示原数据表中含有指定变量为某 */
 /* 特定值的观测，否则=0。 */
 /* */
@@ -2080,15 +2107,15 @@ run;
 /*%let FlagValueExists=FlagValueExists1;*/
 /*%ChkValue(&SourceTable,&InputVar,&Value,&FlagValueExists);*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号：14*/
 %macro ChkVarFormat(SourceTable,InputVar,FlagVarFormat);
 
 /**********************************************************************/
 /* 此宏的作用是检查某数据表中指定变量的格式，如日期格式YYMMDD10.和字 */
-/* 符串格式$40.。其中，SourceTable是原始表格；InputVar是指定的变量， */
-/* 若为多个变量，请用空格分隔；FlagVarFormat是标记宏变量名称，若有多 */
+/* 符串格式$40.。其中，SourceTable是原始表格;InputVar是指定的变量， */
+/* 若为多个变量，请用空格分隔;FlagVarFormat是标记宏变量名称，若有多 */
 /* 个InputVar变量，则用小数点分隔。 */
 /* */
 /* 最终得到的是宏变量&FlagVarFormat。 */
@@ -2189,8 +2216,8 @@ run;
 
 /**********************************************************************/
 /* 此宏的作用是检查某数据表中指定变量的类型，即数值型或字符型。其中， */
-/* SourceTable是原始表格；InputVar是指定的变量，若为多个变量，请用空 */
-/* 格分隔；FlagVarType是标记宏变量名称，=N表示为数值型，=C表示为字符 */
+/* SourceTable是原始表格;InputVar是指定的变量，若为多个变量，请用空 */
+/* 格分隔;FlagVarType是标记宏变量名称，=N表示为数值型，=C表示为字符 */
 /* 型，若有多个InputVar变量，则不同位置上的N或C代表相应变量的类型。 */
 /* */
 /* 最终得到的是宏变量&FlagVarType，=N表示指定变量为数值型，=C表示为字 */
@@ -2288,7 +2315,7 @@ run;
 
 /**********************************************************************/
 /* 此宏的作用是检查某数据表中是否存在指定的变量。其中，SourceTable是 */
-/* 原始表格；InputVar是指定的变量，若为多个变量，请用空格分隔；Flag_ */
+/* 原始表格;InputVar是指定的变量，若为多个变量，请用空格分隔;Flag_ */
 /* VarExists是标记宏变量名称，=1表示变量存在，否则=0，若有多个InputVar*/
 /* 变量，则不同位置上的1或0代表相应的变量是否存在。 */
 /* */
@@ -2384,11 +2411,11 @@ run;
 /**********************************************************************/
 /* 此宏用于检查指定的数据集是否存在。其中，DataSet是指定的数据集，若 */
 /* 需要指定具体的逻辑库，则采用逻辑库.数据库的格式，可设多个数据集， */
-/* 用空格分隔；FlagDataSetExists是标记宏变量名称，=1表示数据集存在， */
+/* 用空格分隔;FlagDataSetExists是标记宏变量名称，=1表示数据集存在， */
 /* 否则=No，若指定了多个数据集，则不同位置上的1或0代表相应的数据集是 */
 /* 否存在。另外需要注意，第一，当仅指定一个数据集时，若不指定逻辑库名 */
 /* 称，而只指定数据集名称，此时若在SAS环境中只包含一个指定的数据集， */
-/* 则标记宏变量FlagDataSetExists=1，若包含多个同名的数据集，则会报错；*/
+/* 则标记宏变量FlagDataSetExists=1，若包含多个同名的数据集，则会报错;*/
 /* 第二，当指定多个数据集时，若不指定逻辑库名称，则默认为WORK逻辑库。 */
 /* */
 /* 最终得到的是宏变量&FlagDataSetExists，若指定数据集存在，则有 */
@@ -2492,7 +2519,7 @@ quit;
 /**/
 /*%put &FlagDataSetExists1;*/
 /**/
-/*%mend;*/
+%mend;
 
 /*编号：18*/
 %macro SeparateString(InputString,OutputString);
@@ -2558,7 +2585,7 @@ run;
 %macro ChkFile(OutFilePath);
 /**********************************************************************/
 /* 此宏的作用是检查指定路径的文件夹或文件是否存在。若指定路径包含文件 */
-/* 名，则运行此宏后路径中包含的文件夹存在但文件不存在，方便以后操作； */
+/* 名，则运行此宏后路径中包含的文件夹存在但文件不存在，方便以后操作; */
 /* 若指定路径不包含文件名，则运行此宏后路径中包含的文件夹存在。其中， */
 /* OutFilePath是指定的文件夹或文件路径。注意如果路径中包含文件名，则  */
 /* 一定要写全文件名和其扩展名。                                       */
@@ -2623,8 +2650,7 @@ run;
 
 
 /*编号：20*/
-/*dopen()打开指定路径;dnum()返回一个路径下的成员个数;filename(x,y)将地址y的值赋给变量x;
-dread()返回特定路径下某成员名字;*/
+/*dopen()打开指定路径;dnum()返回一个路径下的成员个数;filename(x,y)将地址y的值赋给变量x;dread()返回特定路径下某成员名字;*/
 %MACRO GETFILES_IN_FOLDER(DIRNAME,TYP,DIRFILES)     ;/*参数有三个：路径，文件类型后缀,存入数据集*/
 /*   %PUT %STR(----------->DIRNAME=&DIRNAME)        ;*/
 /*   %PUT %STR(----------->TYP=&TYP)                ;*/
@@ -2652,9 +2678,51 @@ PROC SORT                                      ;/*按照NAME排序*/
 RUN;                                            
 %MEND;
 
+/*编号：21*/
+/**********************************************************************/
+/* 此宏用于得到当前活动路径或文件名。其中，Type是标记变量，=Path表示  */
+/* 不包括文件名的路径，以\结尾，=FullPath表示全部路径，=FileNameAndExt*/
+/* 表示包含扩展名的全部文件名，=FileName表示文件名;OutputVar是输出的 */
+/* 宏变量名称。此宏主要用于变相得到相对路径引用。                     */
+/*                                                                    */
+/* 最终得到的是当前活动路径或文件名的宏变量&OutputVar。               */
+/*                                                                    */
+/**********************************************************************/
+%macro GetCurrentPath(Type,OutputVar);
+/* 检查Type的合法性 */
+%if (%UPCASE(&Type) NE PATH) AND (%UPCASE(&Type) NE FULLPATH) AND (%UPCASE(&Type) NE FILENAMEANDEXT) AND (%UPCASE(&Type) NE FILENAME) %then %do;
+        %put ERROR: The Type should be Path, FullPath, FileNameAndExt or FileName, case insensitive and without quotes.;
+        %goto exit;
+%end;
+
+/* 检查OutputVar的存在性 */
+%if &OutputVar EQ %STR() %then %do;
+    %put ERROR: The OutputVar should not be blank, please check it again.;
+    %goto exit;
+%end;
+
+%global &OutputVar;
+
+/* 开始进行计算 */
+%if %UPCASE(&Type) EQ PATH %then %do;
+        %let &OutputVar=%QSUBSTR(%SYSGET(SAS_EXECFILEPATH),1,%LENGTH(%SYSGET(SAS_EXECFILEPATH))-%LENGTH(%SYSGET(SAS_EXECFILENAME)));
+%end;
+%else %if %UPCASE(&Type) EQ FULLPATH %then %do;
+        %let &OutputVar=%SYSGET(SAS_EXECFILEPATH);
+%end;
+%else %if %UPCASE(&Type) EQ FILENAMEANDEXT %then %do;
+        %let &OutputVar=%SYSGET(SAS_EXECFILENAME);
+%end;
+%else %if %UPCASE(&Type) EQ FILENAME %then %do;
+        %let &OutputVar=%QSUBSTR(%SYSGET(SAS_EXECFILENAME),1,%LENGTH(%SYSGET(SAS_EXECFILENAME))-%LENGTH(%SCAN(%SYSGET(SAS_EXECFILENAME),-1,%STR(.)))-1);
+%end;
+
+%exit:
+%mend;
+
 
 /*编号：*/
-/*生成混合矩阵 DSin 输入数据；ProbVar 估计违约概率变量；DVVar 实际违约状态变量；Cutoff 临界值；DSCM 混合矩阵数据集*/
+/*生成混合矩阵 DSin 输入数据;ProbVar 估计违约概率变量;DVVar 实际违约状态变量;Cutoff 临界值;DSCM 混合矩阵数据集*/
 %macro ConfMat(DSin, ProbVar, DVVar, Cutoff, DSCM);
 data temp;
  set &DSin;
@@ -2691,7 +2759,7 @@ quit;
 %mend;
 
 /*编号：*/
-/*生成用于绘制提升图的数据集，默认等分规模为10 DSin 输入数据；ProbVar 估计违约概率变量；DVVar 实际违约状态变量；DSLift 提升图结果数据集*/
+/*生成用于绘制提升图的数据集，默认等分规模为10 DSin 输入数据;ProbVar 估计违约概率变量;DVVar 实际违约状态变量;DSLift 提升图结果数据集*/
 %macro LiftChart(DSin, ProbVar, DVVar, DSLift);
 /* Calculation of the Lift chart data from 
    the predicted probabilities DSin using 
@@ -2733,7 +2801,7 @@ data &DSLift;
 	label PPer='"好"客户的比例';
 	label NPer='"坏"客户的比例';
 
-	if _N_ = Tile*Tile_Size then 	do;
+	if _N_ = Tile*Tile_Size then do;
 		output;
 		if Tile <10 then  Tile=Tile+1;
 	end;	
@@ -2783,7 +2851,7 @@ quit;
 
 
 /*编号：*/
-/*使用洛伦兹曲线的数据计算基尼统计量 DSin 输入数据；ProbVar 估计违约概率变量；DVVar 实际违约状态变量；DSLorenz 包含洛伦兹曲线数据的数据集；M_Gini 基尼统计量值的返回值*/
+/*使用洛伦兹曲线的数据计算基尼统计量 DSin 输入数据;ProbVar 估计违约概率变量;DVVar 实际违约状态变量;DSLorenz 包含洛伦兹曲线数据的数据集;M_Gini 基尼统计量值的返回值*/
 %macro GiniStat(DSin, ProbVar, DVVar, DSLorenz, M_Gini);
 /* Calculation of the Gini Statistic from the results of 
    a predictive model. DSin is the dataset with a dependent
@@ -2912,7 +2980,7 @@ quit;
 %mend;
 
 /*编号：*/
-/*使用K-S统计量绘制K-S曲线 DSin 输入数据；ProbVar 估计违约概率变量；DVVar 实际违约状态变量； DSKS 包含K-S曲线数据的数据集； M_Gini K-S统计量的返回值*/
+/*使用K-S统计量绘制K-S曲线 DSin 输入数据;ProbVar 估计违约概率变量;DVVar 实际违约状态变量; DSKS 包含K-S曲线数据的数据集; M_Gini K-S统计量的返回值*/
 /*K-S值的意义：K-S值越大，表示评分模型能够将“好”、“坏”客户区分开来的程度越大。*/
 /*K-S 曲线：将所有申请者的信用评分由小到大排列，分别计算每一个分数之下“好”、“坏”帐户累计所占的百分比，再将这两种累计百分比与评分做在同一张图形上，得到K-S曲线。*/
 /*K-S值：各分数下对应的累计“坏”帐户百分比与累计“好”帐户百分比之差的最大值。*/
@@ -3025,3 +3093,14 @@ quit;
 %mend;
 
 
+/*判断数据集是否为空*/
+%macro datasetcheck(dsname);
+     %global  nobs;
+         %let  dsid=%sysfunc(open(&dsname));
+          %if  &dsid %then %do;
+                     %let nobs=%sysfunc(attrn(&dsid,nobs));
+                         %let rc=%sysfunc(close(&dsid));
+                         %put The dataset :&dsname has &nobs of observation ;
+                %end;
+      %else %put open  dataset &dsname failed %sysfunc(sysmsg()) ;
+%mend;
